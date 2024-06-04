@@ -4,12 +4,11 @@ import {
 	getAuth,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	updateProfile,
 } from 'firebase/auth';
-import { getDatabase, set, ref } from 'firebase/database';
 import { firebaseApp } from '../firebase.js';
 
 const firebaseAuth = getAuth(firebaseApp);
-const database = getDatabase(firebaseApp);
 
 const FirebaseContext = createContext(null);
 
@@ -24,14 +23,18 @@ export const FirebaseProvider = (props) => {
 		return signInWithEmailAndPassword(firebaseAuth, email, password);
 	};
 
-	const putData = (key, data) => set(ref(database, key), data);
+	const updateUserProfile = (name) => {
+		return updateProfile(firebaseAuth.currentUser, {
+			displayName: name,
+		});
+	};
 
 	return (
 		<FirebaseContext.Provider
 			value={{
 				registerUserWithEmailAndPassword,
 				loginWithEmailAndPassword,
-				putData,
+				updateUserProfile,
 			}}
 		>
 			{props.children}
